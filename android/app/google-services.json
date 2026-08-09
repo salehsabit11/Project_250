@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "624964363479",
+    "project_id": "attendance-app-33001",
+    "storage_bucket": "attendance-app-33001.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624964363479:android:2729d564cd35cf83373c92",
+        "android_client_info": {
+          "package_name": "com.example.attendence"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZqWrMcjzDluwwY0MbE-0zgfRqfOCw1aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624964363479:android:be7e130030065ffc373c92",
+        "android_client_info": {
+          "package_name": "com.example.attendence_app1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZqWrMcjzDluwwY0MbE-0zgfRqfOCw1aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624964363479:android:80339f2b4ac92b1a373c92",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZqWrMcjzDluwwY0MbE-0zgfRqfOCw1aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
