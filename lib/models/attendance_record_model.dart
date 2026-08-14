@@ -56,7 +56,7 @@ class AttendanceRecordModel {
     );
   }
 
-  get totalClasses => null;
+  Null get totalClasses => null;
 
   Map<String, dynamic> toMap() {
     return {

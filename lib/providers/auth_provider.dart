@@ -1,4 +1,3 @@
-import 'package:attendence_app1/sevices/auth_service.dart' hide AuthService;
 import 'package:flutter/material.dart';
 
 import '../models/user_model.dart';

@@ -133,5 +133,7 @@ class AttendanceRecordProvider extends ChangeNotifier {
     return AttendanceRecordService.getStudentAttendance();
   }
 
-  Stream<List<AttendanceRecordModel>>? getStudentCourseAttendanceForCurrentUser(String id) {}
+  Stream<List<AttendanceRecordModel>>? getStudentCourseAttendanceForCurrentUser(String id) {
+    return null;
+  }
 }

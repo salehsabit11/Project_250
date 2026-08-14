@@ -127,7 +127,7 @@ class _CreateCourseScreenState extends State<CreateCourseScreen> {
               const SizedBox(height: 20),
 
               DropdownButtonFormField<String>(
-                value: _selectedSemester,
+                initialValue: _selectedSemester,
                 decoration: decoration("Semester"),
                 items: semesters.map((semester) {
                   return DropdownMenuItem(
