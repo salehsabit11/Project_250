@@ -1,7 +1,7 @@
 Smart Attendance System
 
 <p align="center">
-  <strong>Project 250 — Smart Attendance</strong><br>
+  <strong>Project 250 — University Attendance</strong><br>
   Dynamic QR-Based Attendance Management System
 </p>
 
@@ -14,7 +14,7 @@ Smart Attendance System
 
 📌 Overview
 
-Smart Attendance is a digital attendance management system developed for Project 250. It is designed to make classroom attendance faster, easier, and more secure by replacing traditional manual attendance with a dynamic QR-code-based attendance system.
+University Attendance is a digital attendance management system developed for Project 250. It is designed to make classroom attendance faster, easier, and more secure by replacing traditional manual attendance with a dynamic QR-code-based attendance system.
 
 The system has two primary user roles:
 
@@ -302,7 +302,7 @@ Students can view their previous attendance records for their enrolled courses.
 
 🛡️ Anti-Proxy Attendance
 
-Smart Attendance is designed to reduce proxy attendance using multiple validation layers.
+University Attendance is designed to reduce proxy attendance using multiple validation layers.
 
 Security Layer
 
@@ -704,7 +704,7 @@ For team members working directly on the repository, coordinate changes with the
 
 👨‍💻 Project
 
-Project Name: Smart Attendance
+Project Name: University Attendance
 Course: Project 250
 Repository: salehsabit11/Project_250
 Application: Dynamic QR-Based Attendance Management System
