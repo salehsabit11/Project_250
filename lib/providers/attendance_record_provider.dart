@@ -19,9 +19,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// ==========================================================
-  /// Student - Mark Attendance
-  /// ==========================================================
+  // ==========================================================
+  // STUDENT
+  // MARK ATTENDANCE THROUGH QR
+  // ==========================================================
+
   Future<String?> markAttendance({
     required AttendanceSessionModel session,
   }) async {
@@ -40,9 +42,147 @@ class AttendanceRecordProvider extends ChangeNotifier {
     }
   }
 
-  /// ==========================================================
-  /// Teacher - All Attendance Records
-  /// ==========================================================
+  // ==========================================================
+  // TEACHER
+  // GET ALL STUDENTS ENROLLED IN COURSE
+  // ==========================================================
+
+  Stream<List<Map<String, dynamic>>> getCourseStudents(
+    String courseId,
+  ) {
+    return AttendanceRecordService.getCourseStudents(
+      courseId,
+    );
+  }
+
+  // ==========================================================
+  // TEACHER
+  // FIND STUDENT BY UNIVERSITY ID
+  // ==========================================================
+
+  Future<Map<String, dynamic>?> findStudentById(
+    String studentId,
+  ) async {
+    try {
+      _setLoading(true);
+
+      return await AttendanceRecordService.findStudentById(
+        studentId,
+      );
+    } catch (e) {
+      debugPrint(
+        "Error finding student: $e",
+      );
+
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ==========================================================
+  // TEACHER
+  // ADD STUDENT TO COURSE
+  // ==========================================================
+
+  Future<String?> addStudentToCourse({
+    required String courseId,
+    required String courseName,
+    required String courseCode,
+    required String teacherUid,
+    required String teacherCode,
+    required String studentUid,
+  }) async {
+    try {
+      _setLoading(true);
+
+      await AttendanceRecordService.addStudentToCourse(
+        courseId: courseId,
+        courseName: courseName,
+        courseCode: courseCode,
+        teacherUid: teacherUid,
+        teacherCode: teacherCode,
+        studentUid: studentUid,
+      );
+
+      return null;
+    } catch (e) {
+      return e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ==========================================================
+  // TEACHER
+  // MANUALLY MARK STUDENT PRESENT / ABSENT
+  // ==========================================================
+
+  Future<String?> markStudentAttendanceManually({
+    required AttendanceSessionModel session,
+    required String studentUid,
+    required String status,
+  }) async {
+    try {
+      _setLoading(true);
+
+      await AttendanceRecordService.markStudentAttendanceManually(
+        session: session,
+        studentUid: studentUid,
+        status: status,
+      );
+
+      return null;
+    } catch (e) {
+      return e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ==========================================================
+  // TEACHER
+  // UPDATE PRESENT / ABSENT STATUS
+  // ==========================================================
+
+  Future<String?> updateAttendanceStatus({
+    required String recordId,
+    required String status,
+  }) async {
+    try {
+      _setLoading(true);
+
+      await AttendanceRecordService.updateAttendanceStatus(
+        recordId: recordId,
+        status: status,
+      );
+
+      return null;
+    } catch (e) {
+      return e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ==========================================================
+  // TEACHER
+  // GET ATTENDANCE FOR ONE CLASS SESSION
+  // ==========================================================
+
+  Stream<List<AttendanceRecordModel>> getSessionAttendance(
+    String sessionId,
+  ) {
+    return AttendanceRecordService.getSessionAttendance(
+      sessionId,
+    );
+  }
+
+  // ==========================================================
+  // TEACHER
+  // ALL ATTENDANCE RECORDS OF COURSE
+  // ==========================================================
+
   Stream<List<AttendanceRecordModel>> getCourseAttendance(
     String courseId,
   ) {
@@ -51,9 +191,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Teacher - Student Attendance Summary
-  /// ==========================================================
+  // ==========================================================
+  // TEACHER
+  // STUDENT ATTENDANCE SUMMARY
+  // ==========================================================
+
   Stream<List<StudentAttendanceSummary>>
       getCourseAttendanceSummary(
     String courseId,
@@ -63,9 +205,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Teacher - Course Statistics
-  /// ==========================================================
+  // ==========================================================
+  // TEACHER
+  // COURSE STATISTICS
+  // ==========================================================
+
   Stream<List<CourseStatisticsModel>>
       getCourseStatistics(
     String courseId,
@@ -75,9 +219,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Teacher - All Class Sessions
-  /// ==========================================================
+  // ==========================================================
+  // TEACHER
+  // ALL CLASS SESSIONS
+  // ==========================================================
+
   Stream<List<ClassSessionModel>>
       getCourseClassSessions(
     String courseId,
@@ -87,21 +233,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Teacher - Students Present In One Session
-  /// ==========================================================
-  Stream<List<AttendanceRecordModel>>
-      getSessionAttendance(
-    String sessionId,
-  ) {
-    return AttendanceRecordService.getSessionAttendance(
-      sessionId,
-    );
-  }
+  // ==========================================================
+  // TEACHER
+  // ONE STUDENT ATTENDANCE HISTORY
+  // ==========================================================
 
-  /// ==========================================================
-  /// Teacher - Single Student Attendance History
-  /// ==========================================================
   Stream<List<AttendanceRecordModel>>
       getStudentCourseAttendance({
     required String courseId,
@@ -113,9 +249,11 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Student - Attendance Summary For One Course
-  /// ==========================================================
+  // ==========================================================
+  // STUDENT
+  // COURSE ATTENDANCE SUMMARY
+  // ==========================================================
+
   Stream<StudentCourseSummaryModel>
       getStudentCourseSummary({
     required String courseId,
@@ -125,15 +263,13 @@ class AttendanceRecordProvider extends ChangeNotifier {
     );
   }
 
-  /// ==========================================================
-  /// Student - Complete Attendance History
-  /// ==========================================================
+  // ==========================================================
+  // STUDENT
+  // COMPLETE ATTENDANCE HISTORY
+  // ==========================================================
+
   Stream<List<AttendanceRecordModel>>
       getStudentAttendance() {
     return AttendanceRecordService.getStudentAttendance();
-  }
-
-  Stream<List<AttendanceRecordModel>>? getStudentCourseAttendanceForCurrentUser(String id) {
-    return null;
   }
 }

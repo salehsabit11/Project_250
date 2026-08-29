@@ -14,9 +14,9 @@ class AttendanceService {
   static final FirebaseAuth _auth =
       FirebaseAuth.instance;
 
-  /// ==========================================================
-  /// Start a NEW Class Session
-  /// ==========================================================
+  // ==========================================================
+  // START A NEW CLASS SESSION
+  // ==========================================================
   static Future<AttendanceSessionModel> startAttendance({
     required String courseId,
     required String courseName,
@@ -33,8 +33,14 @@ class AttendanceService {
     // ----------------------------------------------------------
     final previousSessions = await _firestore
         .collection("attendance_sessions")
-        .where("courseId", isEqualTo: courseId)
-        .orderBy("classNumber", descending: true)
+        .where(
+          "courseId",
+          isEqualTo: courseId,
+        )
+        .orderBy(
+          "classNumber",
+          descending: true,
+        )
         .limit(1)
         .get();
 
@@ -51,10 +57,11 @@ class AttendanceService {
     }
 
     // ----------------------------------------------------------
-    // Create ONE session for this class
+    // Create a new attendance session
     // ----------------------------------------------------------
-    final doc =
-        _firestore.collection("attendance_sessions").doc();
+    final doc = _firestore
+        .collection("attendance_sessions")
+        .doc();
 
     final now = DateTime.now();
 
@@ -79,6 +86,9 @@ class AttendanceService {
       qrToken: qrToken,
     );
 
+    // ----------------------------------------------------------
+    // Save session to Firestore
+    // ----------------------------------------------------------
     await doc.set(
       session.toMap(),
     );
@@ -86,11 +96,10 @@ class AttendanceService {
     return session;
   }
 
-  /// ==========================================================
-  /// Generate NEW QR for SAME Class Session
-  /// ==========================================================
-  static Future<AttendanceSessionModel>
-      regenerateQr(
+  // ==========================================================
+  // GENERATE NEW QR FOR SAME CLASS SESSION
+  // ==========================================================
+  static Future<AttendanceSessionModel> regenerateQr(
     String sessionId,
   ) async {
     final sessionRef = _firestore
@@ -116,21 +125,22 @@ class AttendanceService {
       );
     }
 
-    final newQrToken =
-        _generateQrToken();
+    // Generate a new QR token
+    final newQrToken = _generateQrToken();
 
-    final newEndTime =
-        DateTime.now().add(
+    // New QR expires after 10 seconds
+    final newEndTime = DateTime.now().add(
       const Duration(seconds: 10),
     );
 
     await sessionRef.update({
       "qrToken": newQrToken,
-      "endTime":
-          Timestamp.fromDate(newEndTime),
+      "endTime": Timestamp.fromDate(
+        newEndTime,
+      ),
     });
 
-    // Return updated session
+    // Get updated session
     final updatedDoc =
         await sessionRef.get();
 
@@ -139,9 +149,9 @@ class AttendanceService {
     );
   }
 
-  /// ==========================================================
-  /// Generate QR Token
-  /// ==========================================================
+  // ==========================================================
+  // GENERATE QR TOKEN
+  // ==========================================================
   static String _generateQrToken() {
     final random = Random();
 
@@ -149,11 +159,10 @@ class AttendanceService {
         "_${random.nextInt(999999)}";
   }
 
-  /// ==========================================================
-  /// Get One Attendance Session
-  /// ==========================================================
-  static Future<AttendanceSessionModel?>
-      getSession(
+  // ==========================================================
+  // GET ONE ATTENDANCE SESSION
+  // ==========================================================
+  static Future<AttendanceSessionModel?> getSession(
     String sessionId,
   ) async {
     final doc = await _firestore
@@ -169,45 +178,112 @@ class AttendanceService {
       doc.data()!,
     );
   }
-  /// ==========================================================
-/// Find Active Session Using QR Token
-/// ==========================================================
-static Future<AttendanceSessionModel?> getSessionByQrToken(
-  String qrToken,
-) async {
-  final snapshot = await _firestore
-      .collection("attendance_sessions")
-      .where(
-        "qrToken",
-        isEqualTo: qrToken,
-      )
-      .where(
-        "isActive",
-        isEqualTo: true,
-      )
-      .limit(1)
-      .get();
 
-  if (snapshot.docs.isEmpty) {
-    return null;
+  // ==========================================================
+  // GET ALL ATTENDANCE SESSIONS
+  //
+  // Newest session will appear first.
+  // Sorted using startTime.
+  // ==========================================================
+  static Stream<List<AttendanceSessionModel>>
+      getAllSessions() {
+    return _firestore
+        .collection("attendance_sessions")
+        .orderBy(
+          "startTime",
+          descending: true,
+        )
+        .snapshots()
+        .map(
+          (snapshot) {
+            return snapshot.docs.map(
+              (doc) {
+                return AttendanceSessionModel.fromMap(
+                  doc.data(),
+                );
+              },
+            ).toList();
+          },
+        );
   }
 
-  final session =
-      AttendanceSessionModel.fromMap(
-    snapshot.docs.first.data(),
-  );
-
-  // Check whether this QR has expired.
-  if (DateTime.now().isAfter(session.endTime)) {
-    return null;
+  // ==========================================================
+  // GET SESSIONS FOR ONE COURSE
+  //
+  // Newest class of that course will appear first.
+  // ==========================================================
+  static Stream<List<AttendanceSessionModel>>
+      getCourseSessions(
+    String courseId,
+  ) {
+    return _firestore
+        .collection("attendance_sessions")
+        .where(
+          "courseId",
+          isEqualTo: courseId,
+        )
+        .orderBy(
+          "startTime",
+          descending: true,
+        )
+        .snapshots()
+        .map(
+          (snapshot) {
+            return snapshot.docs.map(
+              (doc) {
+                return AttendanceSessionModel.fromMap(
+                  doc.data(),
+                );
+              },
+            ).toList();
+          },
+        );
   }
 
-  return session;
-}
+  // ==========================================================
+  // FIND ACTIVE SESSION USING QR TOKEN
+  // ==========================================================
+  static Future<AttendanceSessionModel?>
+      getSessionByQrToken(
+    String qrToken,
+  ) async {
+    final snapshot = await _firestore
+        .collection("attendance_sessions")
+        .where(
+          "qrToken",
+          isEqualTo: qrToken,
+        )
+        .where(
+          "isActive",
+          isEqualTo: true,
+        )
+        .limit(1)
+        .get();
 
-  /// ==========================================================
-  /// Stop / End Class Session
-  /// ==========================================================
+    if (snapshot.docs.isEmpty) {
+      return null;
+    }
+
+    final session =
+        AttendanceSessionModel.fromMap(
+      snapshot.docs.first.data(),
+    );
+
+    // ----------------------------------------------------------
+    // Check whether QR has expired
+    // ----------------------------------------------------------
+    if (DateTime.now().isAfter(
+      session.endTime,
+    )) {
+      return null;
+    }
+
+    return session;
+  }
+
+  // ==========================================================
+  // STOP / END CLASS SESSION
+  // ==========================================================
   static Future<void> stopAttendance(
     String sessionId,
   ) async {

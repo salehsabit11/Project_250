@@ -3,40 +3,62 @@ import 'package:provider/provider.dart';
 
 import '../../models/course_model.dart';
 import '../../providers/course_provider.dart';
+
 import 'course_attendance_screen.dart';
 import 'generate_qr_screen.dart';
+import 'edit_attendance_screen.dart';
 
 class CourseListScreen extends StatelessWidget {
   const CourseListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final courseProvider = Provider.of<CourseProvider>(context);
+    final courseProvider =
+        Provider.of<CourseProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Courses"),
         centerTitle: true,
       ),
+
       body: StreamBuilder<List<CourseModel>>(
         stream: courseProvider.getTeacherCourses(),
+
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          // =====================================================
+          // LOADING
+          // =====================================================
+
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
+          // =====================================================
+          // ERROR
+          // =====================================================
+
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                snapshot.error.toString(),
-                textAlign: TextAlign.center,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  snapshot.error.toString(),
+                  textAlign: TextAlign.center,
+                ),
               ),
             );
           }
 
-          final courses = snapshot.data ?? [];
+          final courses =
+              snapshot.data ?? [];
+
+          // =====================================================
+          // NO COURSES
+          // =====================================================
 
           if (courses.isEmpty) {
             return const Center(
@@ -50,66 +72,161 @@ class CourseListScreen extends StatelessWidget {
             );
           }
 
+          // =====================================================
+          // COURSE LIST
+          // =====================================================
+
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: courses.length,
+
             itemBuilder: (context, index) {
               final course = courses[index];
 
               return Card(
                 elevation: 5,
-                margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+
+                margin:
+                    const EdgeInsets.only(
+                  bottom: 16,
                 ),
+
+                shape:
+                    RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(15),
+                ),
+
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding:
+                      const EdgeInsets.all(16),
+
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+
                     children: [
+                      // =================================================
+                      // COURSE NAME
+                      // =================================================
+
                       Text(
                         course.courseName,
-                        style: const TextStyle(
+
+                        style:
+                            const TextStyle(
                           fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          fontWeight:
+                              FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 10),
+
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      // =================================================
+                      // COURSE CODE
+                      // =================================================
+
                       Row(
                         children: [
-                          const Icon(Icons.code, size: 18),
-                          const SizedBox(width: 8),
-                          Text("Course Code: ${course.courseCode}"),
+                          const Icon(
+                            Icons.code,
+                            size: 18,
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Text(
+                            "Course Code: "
+                            "${course.courseCode}",
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+
+                      const SizedBox(
+                        height: 8,
+                      ),
+
+                      // =================================================
+                      // DEPARTMENT
+                      // =================================================
+
                       Row(
                         children: [
-                          const Icon(Icons.apartment, size: 18),
-                          const SizedBox(width: 8),
-                          Text("Department: ${course.department}"),
+                          const Icon(
+                            Icons.apartment,
+                            size: 18,
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Text(
+                            "Department: "
+                            "${course.department}",
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+
+                      const SizedBox(
+                        height: 8,
+                      ),
+
+                      // =================================================
+                      // SEMESTER
+                      // =================================================
+
                       Row(
                         children: [
-                          const Icon(Icons.school, size: 18),
-                          const SizedBox(width: 8),
-                          Text("Semester: ${course.semester}"),
+                          const Icon(
+                            Icons.school,
+                            size: 18,
+                          ),
+
+                          const SizedBox(
+                            width: 8,
+                          ),
+
+                          Text(
+                            "Semester: "
+                            "${course.semester}",
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      // =================================================
+                      // GENERATE QR
+                      // =================================================
 
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.qr_code),
-                          label: const Text("Generate QR"),
+
+                        child:
+                            ElevatedButton.icon(
+                          icon: const Icon(
+                            Icons.qr_code,
+                          ),
+
+                          label: const Text(
+                            "Generate QR",
+                          ),
+
                           onPressed: () {
                             Navigator.push(
                               context,
+
                               MaterialPageRoute(
-                                builder: (_) => GenerateQrScreen(
+                                builder: (_) =>
+                                    GenerateQrScreen(
                                   course: course,
                                 ),
                               ),
@@ -118,18 +235,34 @@ class CourseListScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 10),
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      // =================================================
+                      // ATTENDANCE HISTORY
+                      // =================================================
 
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.history),
-                          label: const Text("Attendance"),
+
+                        child:
+                            ElevatedButton.icon(
+                          icon: const Icon(
+                            Icons.history,
+                          ),
+
+                          label: const Text(
+                            "Attendance",
+                          ),
+
                           onPressed: () {
                             Navigator.push(
                               context,
+
                               MaterialPageRoute(
-                                builder: (_) => CourseAttendanceScreen(
+                                builder: (_) =>
+                                    CourseAttendanceScreen(
                                   course: course,
                                 ),
                               ),
@@ -138,37 +271,108 @@ class CourseListScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 10),
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      // =================================================
+                      // EDIT ATTENDANCE
+                      // =================================================
+
+                      SizedBox(
+                        width: double.infinity,
+
+                        child:
+                            ElevatedButton.icon(
+                          icon: const Icon(
+                            Icons.edit,
+                          ),
+
+                          label: const Text(
+                            "Edit Attendance",
+                          ),
+
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    EditAttendanceScreen(
+                                  course: course,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      // =================================================
+                      // DELETE COURSE
+                      // =================================================
 
                       Align(
-                        alignment: Alignment.centerRight,
+                        alignment:
+                            Alignment.centerRight,
+
                         child: IconButton(
                           icon: const Icon(
                             Icons.delete,
                             color: Colors.red,
                           ),
-                          tooltip: "Delete Course",
+
+                          tooltip:
+                              "Delete Course",
+
                           onPressed: () async {
-                            final confirm = await showDialog<bool>(
+                            final confirm =
+                                await showDialog<bool>(
                               context: context,
-                              builder: (dialogContext) {
+
+                              builder:
+                                  (dialogContext) {
                                 return AlertDialog(
-                                  title: const Text("Delete Course"),
-                                  content: const Text(
+                                  title:
+                                      const Text(
+                                    "Delete Course",
+                                  ),
+
+                                  content:
+                                      const Text(
                                     "Are you sure you want to delete this course?",
                                   ),
+
                                   actions: [
                                     TextButton(
                                       onPressed: () {
-                                        Navigator.pop(dialogContext, false);
+                                        Navigator.pop(
+                                          dialogContext,
+                                          false,
+                                        );
                                       },
-                                      child: const Text("Cancel"),
+
+                                      child:
+                                          const Text(
+                                        "Cancel",
+                                      ),
                                     ),
+
                                     ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pop(dialogContext, true);
+                                        Navigator.pop(
+                                          dialogContext,
+                                          true,
+                                        );
                                       },
-                                      child: const Text("Delete"),
+
+                                      child:
+                                          const Text(
+                                        "Delete",
+                                      ),
                                     ),
                                   ],
                                 );
@@ -176,13 +380,22 @@ class CourseListScreen extends StatelessWidget {
                             );
 
                             if (confirm == true) {
-                              await courseProvider.deleteCourse(course.id);
+                              await courseProvider
+                                  .deleteCourse(
+                                course.id,
+                              );
 
-                              if (!context.mounted) return;
+                              if (!context.mounted) {
+                                return;
+                              }
 
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              ScaffoldMessenger
+                                      .of(context)
+                                  .showSnackBar(
                                 const SnackBar(
-                                  content: Text("Course deleted successfully."),
+                                  content: Text(
+                                    "Course deleted successfully.",
+                                  ),
                                 ),
                               );
                             }
